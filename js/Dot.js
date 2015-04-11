@@ -15,7 +15,7 @@ Game.Dot = function() {
 	this.shootY = 0;
 	this.lastShot = 0;
 	this.dmg = 1;
-	this.shootDelay = 1200;
+	this.shootDelay = 1150;
 	this.allShots = [];
 
 	// function

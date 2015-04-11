@@ -45,7 +45,8 @@ RedDot.prototype.update = function() {
 			}
 			if (Game.lastTime > this.lastShot2 && Game.reds.length < 10) {
 				this.lastShot2 = Game.lastTime + this.shootDelay + 6000;
-				tmpRed = new RedDot(Game.lvl-5);
+				tmpRed = new RedDot(Game.lvl - 5);
+				tmpRed.xp = 1;
 				tmpRed.setShotDelay(400);
 				tmpRed.dx = 0;
 				tmpRed.dy = 0;

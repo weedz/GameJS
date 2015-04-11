@@ -2,7 +2,7 @@ Game.UI = {
 	textUpdateDelay: 250,
 	notTimeout: [],
 	combatTextTimeout: [],
-	
+
 	clearAll: function() {
 		window.getSelection().removeAllRanges();
 		Game.play = false;
@@ -17,7 +17,7 @@ Game.UI = {
 			$("#game-canvas").hide();
 		}
 	},
-	
+
 	init: function() {
 		$("#game nav").on("click", ".link-main", function(){Game.UI.show_main()});
 		$("#game nav").on("click", ".link-shop", function(){Game.UI.show_page(Game.UI.shop_startPage)});
@@ -57,7 +57,7 @@ Game.UI = {
 				this.show_main();
 		}
 	},
-	
+
 	show_start: function() {
 		this.clearAll();
 		$("#game-content").append(
@@ -92,10 +92,10 @@ Game.UI = {
 	show_gameover: function() {
 		this.clearAll();
 		$("#game-content").append(
-			'<h2>Game Over</h2>' + 
+			'<h2>Game Over</h2>' +
 			'<a href="#"  class="restart-game">Restart</a>' +
 			'<div>' +
-			'<p class="score"></p>' + 
+			'<p class="score"></p>' +
 			'<p class="legacy-score"></p>' +
 			'<p class="dot-level"></p>' +
 			'<p class="game-money"></p>' +
@@ -116,7 +116,7 @@ Game.UI = {
 			'<h2 class="level-complete"></h2>' +
 			'<a href="#" class="next-level"></a>' +
 			'<div>' +
-			'<p class="score"></p>' + 
+			'<p class="score"></p>' +
 			'<p class="legacy-score"></p>' +
 			'<p class="dot-level"></p>' +
 			'<p class="game-money"></p>' +
@@ -145,7 +145,7 @@ Game.UI = {
 			'<h2 class="current-level"></h2>' +
 			'<a href="#" class="begin-level">Begin</a>' +
 			'<div>' +
-			'<p class="score"></p>' + 
+			'<p class="score"></p>' +
 			'<p class="legacy-score"></p>' +
 			'<p class="dot-level"></p>' +
 			'<p class="game-money"></p>' +
@@ -167,7 +167,7 @@ Game.UI = {
 			}
 		});
 	},
-	
+
 	show_main: function() {
 		if (Game.play || Game.pause === true) {
 			return false;
@@ -175,7 +175,7 @@ Game.UI = {
 		if (Game.pause) {
 			$("#game-content").html('<canvas id="game-canvas" width="'+stageWidth+'" height="'+stageHeight+'"></canvas>');
 			//$("#game-content").show();
-		} else {		
+		} else {
 			this.clearAll();
 			if (Game.gameLoaded) {
 				this.show_gameLoaded();
@@ -184,7 +184,7 @@ Game.UI = {
 			}
 		}
 	},
-	
+
 	show_page: function(content) {
 		if (Game.play || Game.pause === true /*|| Game.user == ""*/) {
 			return false;
@@ -192,14 +192,14 @@ Game.UI = {
 		this.clearAll();
 		$("#game-content").append(content);
 	},
-	
+
 	show_stats: function() {
 		if (Game.play || Game.pause === true /* || Game.user == ""*/) {
 			return false;
 		}
 		this.clearAll();
 		$("#game-content").append(
-			'<h2>Stats</h2>' + 
+			'<h2>Stats</h2>' +
 			'<p>Total money earned: <span class="stats-total-money-earned"></span></p>' +
 			'<p>Total shots fired: <span class="stats-total-shots-fired"></span></p>' +
 			'<p>Total shots hit: <span class="stats-total-shots-hit"></span></p>' +
@@ -223,7 +223,7 @@ Game.UI = {
 		$(".stats-total-stages-completed").html(Game.stats.totalLvlsComplete);
 		$(".stats-restarts").html(Game.restarts);
 	},
-	
+
 	show_achievements: function() {
 		if (Game.play || Game.pause === true /* || Game.user == ""*/) {
 			return false;
@@ -234,19 +234,19 @@ Game.UI = {
 			'<p>Total points: ' + Game.ach.points + '/' + Game.ach.totalPoints + '</p>' +
 			'<div><ul class="achievement-list"></ul></div>');
 		var ulElement = $(".achievement-list");
-		
+
 		for (a in Game.ach.list) {
 			b = Game.ach.list[a];
 			ulElement.append('<li><div class="achievement' +
 				(b.complete === true ? ' complete"' : ' incomplete"') + '>' +
 				'<div class="a-p">' + b.points + '</div>' +
 				'<h3>' + b.fullname + '</h3>' +
-				'<p>' + b.description + '</p>' + 
+				'<p>' + b.description + '</p>' +
 				'<p>Progress: ' + b.progress + '/' + b.progressComplete + '</p>' +
 				'</div></li>');
 		}
 	},
-	
+
 	show_multiplayer: function() {
 		if (Game.play || Game.pause === true || Game.user == "") {
 			return false;
@@ -278,10 +278,10 @@ Game.UI = {
 	show_multiplayerLobby: function() {
 		this.clearAll();
 		$("#game-content").append(
-			'<p>Connected players:</p>' + 
+			'<p>Connected players:</p>' +
 			'<div id="connected-players"></div>' +
-			'<h2>Multiplayer Lobby</h2>' + 
-			'<p>You are connected to <strong>' + Game.MP.connection.socket.io.opts.host + ':' + Game.MP.connection.socket.io.opts.port + '</strong></p>' + 
+			'<h2>Multiplayer Lobby</h2>' +
+			'<p>You are connected to <strong>' + Game.MP.connection.socket.io.opts.host + ':' + Game.MP.connection.socket.io.opts.port + '</strong></p>' +
 			'<div id="mp_lobby_chat">' +
 			'<div id="mp_lobby_chat_main"></div>' +
 			'<div id="mp_lobby_chat_input">' +
@@ -290,8 +290,8 @@ Game.UI = {
 			'<input type="submit" value="Send" />' +
 			'</form>' +
 			'</div>' +
-			'</div>' + 
-				(Game.MP.admin ? 
+			'</div>' +
+				(Game.MP.admin ?
 					'<div>' +
 					'<h4>You are admin</h4>' +
 					'<div id="admin-control">' +
@@ -342,9 +342,9 @@ Game.UI = {
 		this.clearAll();
 		$("body").on("mousedown mousemove", handleMouseDown);
 	},
-	
+
 	updateText: function() {
-		$(".version-text").html("v."+Game.version);
+		$(".version-text").html("v."+Game.versionString);
 		$(".username-text").html(unescape(Game.user));
 		$(".hp-text").html(Game.dot.hp/* + "/" + Game.dot.maxHP*/);
 		$(".score-text").html(Game.score);
@@ -357,7 +357,7 @@ Game.UI = {
 			setTimeout(Game.UI.updateText, Game.UI.textUpdateDelay);
 		}
 	},
-	
+
 	show_combatText: function(content, type, target) {
 		var color = type == 'dmg' ? "#ee5555" : "#33ff33";
 		var text = new createjs.Text(content, "Bold 16px Helvetica", color);
@@ -372,9 +372,9 @@ Game.UI = {
 			}, 500));
 		}
 	},
-	
+
 	show_popup: function(popupContent) {
-		var popupHTML = 
+		var popupHTML =
 			'<div id="popup-background"></div>' +
 			'<div id="popup-window">' +
 			'<div id="popup-close">x</div>' +
@@ -388,11 +388,11 @@ Game.UI = {
 			$("#popup-window").remove();
 		});
 	},
-	
+
 	show_notification: function(content) {
 		$("#notifications").prepend(
-			'<div class="notification"> ' + 
-			content + 
+			'<div class="notification"> ' +
+			content +
 			'</div>');
 		var not = $(".notification:first-child");
 		var num = $(".notification").length;
@@ -402,7 +402,7 @@ Game.UI = {
 			'width': 500 - 6 * num,
 			'margin-left': -250 + 3 * num
 		});
-		
+
 		this.notTimeout.push(setTimeout(function() {
 			Game.UI.hide_notification(not);
 		}, 1000 + 1500 * num));
@@ -410,12 +410,12 @@ Game.UI = {
 			Game.UI.hide_notification(this);
 		});
 	},
-	
+
 	hide_notification: function(e) {
 		var cssTop = 0;
 		var cssNewTop = 0;
 		var notIndex = "";
-		
+
 		var num = $(".notification").length;
 		$(".notification").each(function(index) {
 			if ($(this).is($(e)) || num == 1) {
@@ -430,7 +430,7 @@ Game.UI = {
 		});
 		clearTimeout(Game.UI.notTimeout[notIndex]);
 		Game.UI.notTimeout.pop(notIndex, 1);
-		
+
 		setTimeout(function() {
 			$(e).remove();
 		}, 150);
@@ -439,14 +439,14 @@ Game.UI = {
 			'opacity': 0
 		});
 	},
-		
+
 	shop_startPage:
 		'<h2>Shop</h2>',
-	
-	afkfarm_startPage: 
+
+	afkfarm_startPage:
 		'<h2>AFK Farm</h2>',
-	
+
 	options_startPage:
 		'<h2>Options</h2'
-		
+
 }
