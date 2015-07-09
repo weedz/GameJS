@@ -10,18 +10,32 @@ Game.Dot = function() {
 	this.xp = 0;
 	this.immuneTime = 0;
 	this.alive = false;
+	this.stat = new Game.Dot.Stat();
 	// Shots
 	this.shootX = 0;
 	this.shootY = 0;
 	this.lastShot = 0;
 	this.dmg = 1;
+	this.baseDmg = 1;
 	this.shootDelay = 1150;
 	this.allShots = [];
 
 	// function
 	this.create();
 }
-Shot = function() {}
+
+Game.Dot.Stat = function() {
+	this.statPoints = 0;
+	this.dmgPoints = 5;
+	this.hpPoints = 0;
+	this.shootDelayPoints = 0;
+
+	this.dmgPointsTodmg = function() {
+		return Math.floor(this.dmgPoints/3);
+	}
+}
+
+//Shot = function() {}
 
 Game.Dot.prototype.create = function() {
 	var dotCache = new createjs.Graphics().beginFill("rgb(70,100,240)").drawCircle(0, 0, this.rad);
@@ -49,7 +63,8 @@ Game.Dot.prototype.update = function() {
 	}
 	for (i = 0; i < this.allShots.length; i++) {
 		if (this.allShots[i]) {
-			this.allShots[i].shape.x += this.allShots[i].dx * Game.delay;
+			this.allShots[i].move(this.allShots,i);
+			/*this.allShots[i].shape.x += this.allShots[i].dx * Game.delay;
 			this.allShots[i].shape.y += this.allShots[i].dy * Game.delay;
 			// remove shot when out of stage
 			if (this.allShots[i].shape.x > stageWidth + this.allShots[i].rad ||
@@ -58,7 +73,7 @@ Game.Dot.prototype.update = function() {
 					this.allShots[i].shape.y < 0 - this.allShots[i].rad) {
 				this.allShots[i].die();
 				this.allShots.splice(i,1);
-			}
+			}*/
 		}
 	}
 }
@@ -68,7 +83,7 @@ Game.Dot.prototype.shoot = function() {
 		Game.stats.totalShotsFired++;
 		this.lastShot = performance.now();
 		var shotCache = new createjs.Graphics().beginFill("rgb(30,70,220)").drawCircle(0, 0, DOT_RAD/2);
-		var tmpShot = new Shot();
+		var tmpShot = new Game.Shot();
 		tmpShot.shape = new createjs.Shape(shotCache);
 
 		tmpShot.piercing = false;
@@ -77,9 +92,11 @@ Game.Dot.prototype.shoot = function() {
 		tmpShot.shape.y = this.shape.y;
 		tmpShot.rad = DOT_RAD/2;
 		tmpShot.kills = 0;
+		tmpShot.die2 = tmpShot.die;
 		tmpShot.die = function() {
+			this.die2(Game.dot.shotContainer);
 			Game.MiscHandler.multiKills = 0;
-			Game.dot.shotContainer.removeChild(this.shape);
+			//Game.dot.shotContainer.removeChild(this.shape);
 		};
 		var angle = Math.atan2(this.shootX - this.shape.x, this.shootY - this.shape.y);
 		tmpShot.dy = Math.cos(angle) * SHOT_SPEED;

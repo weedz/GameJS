@@ -1,13 +1,13 @@
 /*
  * TODO:
- *
+ *	See ../todo.html
  */
 
 var stageWidth = 900;
 var stageHeight = 700;
 var canvasName = "game-canvas";
 
-var stage = "";//new createjs.Stage(canvasName);
+var stage = ""; //new createjs.Stage(canvasName);
 
 var CRAD = 0.95;	// Collision radius, default: 0.95
 // dot constants
@@ -31,7 +31,7 @@ var Wdown, Adown, Sdown, Ddown, mouseDown = false;
 var Game = {
 	saveTo: "TheDotSave",
 	version: 0.044,
-	versionString: '0.044git',
+	versionString: '0.044git-b',
 	stage: "",
 
 	init: function () {
@@ -60,9 +60,9 @@ var Game = {
 	},
 
 	start: function () {
-		this.dot = new this.Dot();
-		this.stats = new this.Statistics();
-		this.ach = new this.Achievements();
+		this.dot = new Game.Dot();
+		this.stats = new Game.Statistics();
+		this.ach = new Game.Achievements();
 		this.user = "";
 		this.restarts = 0;
 		this.lvl = 1;
@@ -223,23 +223,26 @@ var Game = {
 		// Move reds shots
 		for (i = 0; i < this.redsShots.length; i++) {
 			if (this.redsShots[i]) {
-				this.redsShots[i].shape.x += this.redsShots[i].dx * this.delay;
+				this.redsShots[i].move(this.redsShots,i, this.redsShotContainer);
+				/*this.redsShots[i].shape.x += this.redsShots[i].dx * this.delay;
 				this.redsShots[i].shape.y += this.redsShots[i].dy * this.delay;
 				// remove shot when out of stage
 				if (this.redsShots[i].shape.x > stageWidth + this.redsShots[i].rad ||
 						this.redsShots[i].shape.x < 0 - this.redsShots[i].rad ||
 						this.redsShots[i].shape.y > stageHeight + this.redsShots[i].rad ||
 						this.redsShots[i].shape.y < 0 - this.redsShots[i].rad) {
-					this.redsShotContainer.removeChild(this.redsShots[i].shape);
+					//this.redsShotContainer.removeChild(this.redsShots[i].shape);
+					this.redsShots[i].die(this.redsShotContainer);
 					this.redsShots.splice(i,1);
-				}
+				}*/
 				if (this.redsShots[i] && this.dot.immuneTime < this.lvlTime) {
 					if (this.isColliding(this.redsShots[i], this.dot)) {
 						this.ach.fail("survivor");
 						this.combo = 1;
 						this.dot.takeDamage(this.redsShots[i].dmg);
 						this.UI.show_combatText('-' + this.redsShots[i].dmg, 'dmg', this.dot.shape);
-						this.redsShotContainer.removeChild(this.redsShots[i].shape);
+						//this.redsShotContainer.removeChild(this.redsShots[i].shape);
+						this.redsShots[i].die(this.redsShotContainer);
 						this.redsShots.splice(i, 1);
 					}
 				}
@@ -266,7 +269,7 @@ var Game = {
 			}
 			stage.removeChild(this.dot.shape);
 			setTimeout(function(){
-				this.UI.show_gameover();
+				Game.UI.show_gameover();
 			}, 5000);
 		} else {
 			this.lvl = 1;
@@ -312,13 +315,14 @@ var Game = {
 			setTimeout(this.UI.updateText, this.UI.textUpdateDelay);
 		} else {
 			this.UI.show_notification("<h3>Game is paused</h3><h4>Press 'p' to unpause</h4>");
+			var tmpGame = Game;
 			var f = setInterval(function() {
-				if (!this.pause) {
+				if (!tmpGame.pause) {
 					clearInterval(f);
 				} else {
-					this.UI.show_notification("<h3>Game is paused</h3><h4>Press 'p' to unpause</h4>");
+					tmpGame.UI.show_notification("<h3>Game is paused</h3><h4>Press 'p' to unpause</h4>");
 				}
-			}, 6000);
+			}, 4000);
 		}
 	},
 

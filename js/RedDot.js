@@ -79,7 +79,7 @@ RedDot.prototype.setHP = function(hp) {
 
 RedDot.prototype.shoot = function() {
 	var shotCache = new createjs.Graphics().beginFill("rgb(180,0,0)").drawCircle(0, 0, (NPC_RAD+2)/2);
-	var tmpShot = new Shot();
+	var tmpShot = new Game.Shot();
 	tmpShot.shape = new createjs.Shape(shotCache);
 
 	tmpShot.dmg = 5;

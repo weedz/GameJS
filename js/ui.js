@@ -21,7 +21,6 @@ Game.UI = {
 	init: function() {
 		$("#game nav").on("click", ".link-main", function(){Game.UI.show_main()});
 		$("#game nav").on("click", ".link-shop", function(){Game.UI.show_page(Game.UI.shop_startPage)});
-		$("#game nav").on("click", ".link-afkfarm", function(){Game.UI.show_page(Game.UI.afkfarm_startPage)});
 		$("#game nav").on("click", ".link-achievements", function(){Game.UI.show_achievements()});
 		$("#game nav").on("click", ".link-stats", function(){Game.UI.show_stats()});
 		$("#game nav").on("click", ".link-multiplayer", function() {Game.UI.show_multiplayer()});
@@ -37,9 +36,6 @@ Game.UI = {
 			break;
 			case '#shop':
 				this.show_page(this.shop_startPage);
-			break;
-			case '#afkfarm':
-				this.show_page(this.afkfarm_startPage);
 			break;
 			case '#achievements':
 				this.show_achievements();
@@ -61,10 +57,10 @@ Game.UI = {
 	show_start: function() {
 		this.clearAll();
 		$("#game-content").append(
-			'<div>Username: <input type="text" class="username" maxlength="16" required autofocus /></div>' +
-			'<a href="#" class="start-game">Start game</a>');
-		$('#game-content').on("click",".start-game", function() {
-			var username = $(".username").val();
+			'<form id="start-game-username" method="post">Username: <input type="text" name="username" maxlength="16" minlength="3" required autofocus /><br>' +
+			'<input type="submit" value="Start game" /></form>');
+		$('#start-game-username').on("submit", function(e) {
+			var username = this.username.value;
 			username = username.replace(/\[|\]|<|>|\/|\\|\{|\}|\s|\(|\)/g, '');
 			if (username.length < 3 || username.length > 16) {
 				username = "User";
@@ -72,10 +68,13 @@ Game.UI = {
 				return;
 			}
 			if (confirm('Use this as your username: ' + username)) {
+				e.preventDefault();
 				Game.user = username;
 				$(".username-text").html(Game.user);
 				Game.saveGame();
 				Game.UI.show_gameLoaded();
+			} else {
+				return false;
 			}
 		});
 	},
@@ -367,8 +366,6 @@ Game.UI = {
 			stage.addChild(text);
 			Game.UI.combatTextTimeout.push(setTimeout(function() {
 				stage.removeChild(text);
-				text = null;
-				console.log("Test");
 			}, 500));
 		}
 	},
@@ -442,9 +439,6 @@ Game.UI = {
 
 	shop_startPage:
 		'<h2>Shop</h2>',
-
-	afkfarm_startPage:
-		'<h2>AFK Farm</h2>',
 
 	options_startPage:
 		'<h2>Options</h2'
