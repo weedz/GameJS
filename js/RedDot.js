@@ -22,14 +22,14 @@ RedDot = function(level) {
 	this.alive = true;
 	this.create();
 	this.xp = this.hp;
-}
+};
 
 RedDot.prototype.create = function() {
-	var tmpGraphics = new createjs.Graphics().beginFill("rgb(230,0,0)").drawCircle(0, 0, this.rad)
+	var tmpGraphics = new createjs.Graphics().beginFill("rgb(230,0,0)").drawCircle(0, 0, this.rad);
 	this.shape = new createjs.Shape(tmpGraphics);
 	this.shape.x = this.rad + Math.random() * (stageWidth-2*this.rad);
 	this.shape.y = this.rad + Math.random() * (stageHeight-2*this.rad);
-}
+};
 
 RedDot.prototype.update = function() {
 	if (!this.alive) {
@@ -45,7 +45,7 @@ RedDot.prototype.update = function() {
 			}
 			if (Game.lastTime > this.lastShot2 && Game.reds.length < 10) {
 				this.lastShot2 = Game.lastTime + this.shootDelay + 6000;
-				tmpRed = new RedDot(Game.lvl - 5);
+				var tmpRed = new RedDot(Game.lvl - 5);
 				tmpRed.xp = 1;
 				tmpRed.setShotDelay(400);
 				tmpRed.dx = 0;
@@ -66,16 +66,16 @@ RedDot.prototype.update = function() {
 		}
 	}
 	this.move();
-}
+};
 
 RedDot.prototype.setShotDelay = function(delay) {
 	this.shootDelay = delay;
-}
+};
 
 RedDot.prototype.setHP = function(hp) {
 	this.hp = hp;
 	this.maxHP = hp;
-}
+};
 
 RedDot.prototype.shoot = function() {
 	var shotCache = new createjs.Graphics().beginFill("rgb(180,0,0)").drawCircle(0, 0, (NPC_RAD+2)/2);
@@ -93,11 +93,11 @@ RedDot.prototype.shoot = function() {
 
 	Game.redsShots.push(tmpShot);
 	Game.redsShotContainer.addChild(tmpShot.shape);
-}
+};
 
 RedDot.prototype.move = function() {
-	newX = this.shape.x + this.dx * Game.delay;
-	newY = this.shape.y + this.dy * Game.delay;
+	var newX = this.shape.x + this.dx * Game.delay;
+	var newY = this.shape.y + this.dy * Game.delay;
 	if ((newX + this.rad > stageWidth) || (newX - this.rad < 0)) {
 		this.dx *= -1;
 	}
@@ -113,28 +113,29 @@ RedDot.prototype.move = function() {
 			this.hpBar.y = this.rad+2;
 		}
 	}
-}
+};
 
 RedDot.prototype.takeDamage = function(dmg) {
 	var ratio = (this.hp - dmg) / this.maxHP;
 	this.hp -= dmg;
+	var health;
 	if (!this.hpBar) {
 		this.hpBar = new createjs.Container();
 		var tmpBG = new createjs.Graphics().beginFill("rgb(250,0,0)").drawRect(-this.rad, -this.rad*.5, this.rad*2, this.level % 10 == 0 ? 12 : 6);
 		var bg = new createjs.Shape(tmpBG);
 		this.hpBar.addChildAt(bg, 0);
 
-		var health = new createjs.Shape();
+		health = new createjs.Shape();
 		health.graphics.beginFill("rgb(0,250,0)").drawRect(-this.rad, -this.rad*.5, this.rad*2, this.level % 10 == 0 ? 12 : 6);
 		this.hpBar.addChildAt(health, 1);
 
 		this.hpBar.x = this.shape.x;
-		this.hpBar.y = this.shape.y - this.rad
+		this.hpBar.y = this.shape.y - this.rad;
 		stage.addChild(this.hpBar);
 	}
-	var health = this.hpBar.getChildAt(1);
+	health = this.hpBar.getChildAt(1);
 	health.scaleX = ratio;
-}
+};
 
 RedDot.prototype.die = function() {
 	stage.removeChild(this.hpBar);
@@ -146,4 +147,4 @@ RedDot.prototype.die = function() {
 	this.rad = 0;
 	this.value = 0;
 	this.score = 0;
-}
+};

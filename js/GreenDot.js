@@ -16,12 +16,19 @@ GreenDot.prototype.create = function() {
 	this.shape.y = this.rad + Math.random() * (stageHeight-2*this.rad);
 }
 
+GreenDot.prototype.update = function() {
+	if (!this.alive) {
+		return false;
+	}
+	this.move();
+};
+
 GreenDot.prototype.move = function() {
 	if (!this.alive) {
 		return false;
 	}
-	newX = this.shape.x + this.dx * Game.delay;
-	newY = this.shape.y + this.dy * Game.delay;
+	var newX = this.shape.x + this.dx * Game.delay;
+	var newY = this.shape.y + this.dy * Game.delay;
 	if ((newX + this.rad > stageWidth) || (newX - this.rad < 0)) {
 		this.dx *= -1;
 	}

@@ -3,9 +3,9 @@
  *	See ../todo.html
  */
 
-var stageWidth = 900;
-var stageHeight = 700;
-var canvasName = "game-canvas";
+const stageWidth = 900;
+const stageHeight = 700;
+const canvasName = "game-canvas";
 
 var stage = ""; //new createjs.Stage(canvasName);
 
@@ -26,9 +26,11 @@ var NPC_COUNT = 20;	// default: 20
 var touch = false;
 var mobile = false;
 // keypressed variables
-var Wdown, Adown, Sdown, Ddown, mouseDown = false;
+var Wdown, Adown, Sdown, Ddown;
 
-var Game = {
+var Game;
+
+Game = {
 	saveTo: "TheDotSave",
 	version: 0.044,
 	versionString: '0.044git-b',
@@ -82,7 +84,7 @@ var Game = {
 		this.redsShotContainer = new createjs.Container();
 		this.redsContainer.addChild(this.redsShotContainer);
 		this.redsShots = [];
-		this.greens = [NPC_COUNT/2];
+		this.greens = [NPC_COUNT / 2];
 		this.reds = [NPC_COUNT];
 		this.dot.newLvl();
 
@@ -101,13 +103,13 @@ var Game = {
 		setTimeout(this.UI.updateText, this.UI.textUpdateDelay);
 	},
 
-	nextLvl: function() {
+	nextLvl: function () {
 		this.initLvl();
 	},
 
-	startLvl: function() {
+	startLvl: function () {
 		for (var i = 0; i < NPC_COUNT; i++) {
-			if (i < NPC_COUNT/2) {
+			if (i < NPC_COUNT / 2) {
 				this.greens[i] = new GreenDot();
 				this.greensContainer.addChild(this.greens[i].shape);
 			}
@@ -122,20 +124,20 @@ var Game = {
 		}
 	},
 
-	startMultiplayerSession: function() {
+	startMultiplayerSession: function () {
 		/*this.multiplayer = true;
-		this.dot = new this.Dot();
-		$("body").on("mousedown mousemove", handleMouseDown);
-		this.stage = new createjs.Stage(canvasName);
-		this.stage.addChild(this.dot.shape);
-		this.stage.addChild(this.dot.shotContainer);
-		setTimeout(tick, 1000 / this.fps);
-		this.play = true;
-		this.pause = false;
-		this.MP.connection.connect();*/
+		 this.dot = new this.Dot();
+		 $("body").on("mousedown mousemove", handleMouseDown);
+		 this.stage = new createjs.Stage(canvasName);
+		 this.stage.addChild(this.dot.shape);
+		 this.stage.addChild(this.dot.shotContainer);
+		 setTimeout(tick, 1000 / this.fps);
+		 this.play = true;
+		 this.pause = false;
+		 this.MP.connection.connect();*/
 	},
 
-	lvlComplete: function() {
+	lvlComplete: function () {
 		this.ach.updateProgress("survivor", 1);
 		this.MiscHandler.checkStageTimeAchievements(this.lvlTime);
 		this.MiscHandler.checkStageLvlAchievements(this.lvl);
@@ -152,14 +154,12 @@ var Game = {
 		this.UI.show_lvlComplete();
 	},
 
-	npcMove: function() {
-		var newX;
-		var newY;
+	npcMove: function () {
 		var currentNPCCount = (this.greens.length > this.reds.length ? this.greens.length : this.reds.length);
 		// Move dots
 		for (var i = 0; i < currentNPCCount; i++) {
 			if (this.greens[i]) {
-				this.greens[i].move()
+				this.greens[i].update();
 				if (this.lvlTime > 1500 && this.isColliding(this.dot, this.greens[i]) && this.dot.alive) {
 					this.greensContainer.removeChild(this.greens[i].shape);
 					this.score += this.greens[i].score * Math.floor(this.combo);
@@ -174,9 +174,9 @@ var Game = {
 			}
 			if (this.reds[i]) {
 				// Move
-				this.reds[i].update()
-				for (j = 0; j < this.dot.allShots.length; j++) {
-					if ( this.isColliding(this.dot.allShots[j], this.reds[i]) ) {
+				this.reds[i].update();
+				for (var j = 0; j < this.dot.allShots.length; j++) {
+					if (this.isColliding(this.dot.allShots[j], this.reds[i])) {
 						this.stats.totalShotsHit++;
 						var damageTaken = this.dot.allShots[j].dmg;
 						// Combat text
@@ -184,7 +184,7 @@ var Game = {
 						if (damageTaken >= this.reds[i].hp * 2.5) {
 							this.dot.allShots[j].piercing = true;
 						}
-						this.dot.allShots[j].dmg -= Math.ceil(this.reds[i].hp*2);
+						this.dot.allShots[j].dmg -= Math.ceil(this.reds[i].hp * 2);
 						this.reds[i].takeDamage(damageTaken);
 						if (this.reds[i].hp <= 0) {
 							this.MiscHandler.checkKillingSpree(1);
@@ -223,18 +223,18 @@ var Game = {
 		// Move reds shots
 		for (i = 0; i < this.redsShots.length; i++) {
 			if (this.redsShots[i]) {
-				this.redsShots[i].move(this.redsShots,i, this.redsShotContainer);
+				this.redsShots[i].move(this.redsShots, i, this.redsShotContainer);
 				/*this.redsShots[i].shape.x += this.redsShots[i].dx * this.delay;
-				this.redsShots[i].shape.y += this.redsShots[i].dy * this.delay;
-				// remove shot when out of stage
-				if (this.redsShots[i].shape.x > stageWidth + this.redsShots[i].rad ||
-						this.redsShots[i].shape.x < 0 - this.redsShots[i].rad ||
-						this.redsShots[i].shape.y > stageHeight + this.redsShots[i].rad ||
-						this.redsShots[i].shape.y < 0 - this.redsShots[i].rad) {
-					//this.redsShotContainer.removeChild(this.redsShots[i].shape);
-					this.redsShots[i].die(this.redsShotContainer);
-					this.redsShots.splice(i,1);
-				}*/
+				 this.redsShots[i].shape.y += this.redsShots[i].dy * this.delay;
+				 // remove shot when out of stage
+				 if (this.redsShots[i].shape.x > stageWidth + this.redsShots[i].rad ||
+				 this.redsShots[i].shape.x < 0 - this.redsShots[i].rad ||
+				 this.redsShots[i].shape.y > stageHeight + this.redsShots[i].rad ||
+				 this.redsShots[i].shape.y < 0 - this.redsShots[i].rad) {
+				 //this.redsShotContainer.removeChild(this.redsShots[i].shape);
+				 this.redsShots[i].die(this.redsShotContainer);
+				 this.redsShots.splice(i,1);
+				 }*/
 				if (this.redsShots[i] && this.dot.immuneTime < this.lvlTime) {
 					if (this.isColliding(this.redsShots[i], this.dot)) {
 						this.ach.fail("survivor");
@@ -251,7 +251,7 @@ var Game = {
 		}
 	},
 
-	gameOver: function(restart) {
+	gameOver: function (restart) {
 		this.restarts++;
 		if (!restart) {
 			this.dot.alive = false;
@@ -268,7 +268,7 @@ var Game = {
 				this.lvl = Math.floor(this.lvl / 10) * 10 + 1;
 			}
 			stage.removeChild(this.dot.shape);
-			setTimeout(function(){
+			setTimeout(function () {
 				Game.UI.show_gameover();
 			}, 5000);
 		} else {
@@ -281,22 +281,22 @@ var Game = {
 		this.saveGame();
 	},
 
-	isColliding: function(a, b) {
+	isColliding: function (a, b) {
 		var as = a.shape;
 		var bs = b.shape;
 		var xDistance = Math.abs(as.x - bs.x);
 		var yDistance = Math.abs(as.y - bs.y);
 		var rad = (a.cRad && b.cRad ? a.cRad + b.cRad : a.rad + b.rad);
-		var simple = xDistance < rad && yDistance < rad ? true : false;
+		var simple = !!(xDistance < rad && yDistance < rad);
 		if (simple) {
-			var dist = Math.sqrt( Math.pow(xDistance, 2) + Math.pow(yDistance, 2) );
+			var dist = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 			if (dist < rad) {
 				return true;
 			}
 		}
 	},
 
-	collisionRadius: function(rad) {
+	collisionRadius: function (rad) {
 		var cRad = rad * CRAD;
 		if (rad * CRAD < rad - 4) {
 			cRad = rad - 4;
@@ -304,19 +304,19 @@ var Game = {
 		return cRad;
 	},
 
-	pauseGame: function() {
+	pauseGame: function () {
 		if (this.play === false || this.multiplayer === true) {
 			return;
 		}
 		this.pause = (this.pause ? false : true);
 		if (this.pause !== true) {
 			this.lastTime = performance.now();
-			setTimeout(tick, 1000/this.fps);
+			setTimeout(tick, 1000 / this.fps);
 			setTimeout(this.UI.updateText, this.UI.textUpdateDelay);
 		} else {
 			this.UI.show_notification("<h3>Game is paused</h3><h4>Press 'p' to unpause</h4>");
 			var tmpGame = Game;
-			var f = setInterval(function() {
+			var f = setInterval(function () {
 				if (!tmpGame.pause) {
 					clearInterval(f);
 				} else {
@@ -326,22 +326,22 @@ var Game = {
 		}
 	},
 
-	saveGame: function(exporting) {
+	saveGame: function (exporting) {
 		var str = "";
 		this.user = this.user.replace(/\[|\]|<|>|\/|\\|\{|\}|\s|\(|\)/g, '');
 		str += parseFloat(this.version) + ";" +
-		parseInt(this.lvl) + ";" +
-		parseInt(this.totalScore) + ";" +
-		parseInt(this.money) + ";" +
-		parseInt(this.restarts) + ";" +
-		escape(this.user) + ";" +
-		parseInt(this.score) + ";" + "!END!" +
-		parseInt(this.dot.maxHP) + ";" +
-		parseInt(this.dot.hp) + ";" +
-		parseInt(this.dot.xp) + ";" +
-		parseInt(this.dot.lvl) + ";" +
-		parseInt(this.dot.dmg) + ";" +
-		parseInt(this.dot.shootDelay) + ";" + "!END!";
+			parseInt(this.lvl) + ";" +
+			parseInt(this.totalScore) + ";" +
+			parseInt(this.money) + ";" +
+			parseInt(this.restarts) + ";" +
+			escape(this.user) + ";" +
+			parseInt(this.score) + ";" + "!END!" +
+			parseInt(this.dot.maxHP) + ";" +
+			parseInt(this.dot.hp) + ";" +
+			parseInt(this.dot.xp) + ";" +
+			parseInt(this.dot.lvl) + ";" +
+			parseInt(this.dot.dmg) + ";" +
+			parseInt(this.dot.shootDelay) + ";" + "!END!";
 
 		str += this.stats.writeSaveString();
 		str += this.ach.writeSaveString();
@@ -356,7 +356,7 @@ var Game = {
 		}
 	},
 
-	loadGame: function(data) {
+	loadGame: function (data) {
 		var str = "";
 		if (data) {
 			str = data;
@@ -367,7 +367,7 @@ var Game = {
 		if (str != "") {
 			try {
 				str = atob(str);
-			} catch(InvalidCharacterError) {
+			} catch (InvalidCharacterError) {
 				return false;
 			}
 			var spl = str.split("!END!");
@@ -406,16 +406,16 @@ var Game = {
 		}
 	},
 
-	importGame: function() {
+	importGame: function () {
 		if (this.play) {
 			return false;
 		}
 		this.UI.show_popup('<p>Enter saved game data:</p><div class="center-text"><textarea id="game-data"></textarea></div>' +
-				'<div class="button" onclick="Game.importGameCode();">Import</div>');
+			'<div class="button" onclick="Game.importGameCode();">Import</div>');
 		$("#game-data").focus();
 	},
 
-	importGameCode: function() {
+	importGameCode: function () {
 		var data = document.getElementById("game-data").value;
 		if (this.loadGame(data)) {
 			this.saveGame();
@@ -427,15 +427,15 @@ var Game = {
 
 	},
 
-	exportGame: function() {
+	exportGame: function () {
 		if (this.play || this.user == "") {
 			return false;
 		}
-		this.UI.show_popup('<p>This is your game data:</p><div class="center-text"><textarea id="game-data">'+this.saveGame(true)+'</textarea></div>');
+		this.UI.show_popup('<p>This is your game data:</p><div class="center-text"><textarea id="game-data">' + this.saveGame(true) + '</textarea></div>');
 		$("#game-data").focus().select();
 	},
 
-	resetGameData: function() {
+	resetGameData: function () {
 		if (this.user) {
 			if (this.play) {
 				this.pauseGame();
@@ -447,7 +447,7 @@ var Game = {
 		}
 	},
 
-	logic: function() {
+	logic: function () {
 		this.lvlTime += this.delay;
 		if (this.multiplayer) {
 			// let client.js handle shit
@@ -471,25 +471,23 @@ var Game = {
 	},
 
 	// helper functions
-	addMoney: function(money) {
+	addMoney: function (money) {
 		this.money += money;
 		this.stats.totalMoney += money;
 	},
 
-	xpTable: new Array(	// 30 levels, 10 on each line
-		0,30,50,100,180,300,450,600,800,1050,
-		1300,1600,1900,2250,2600,3000,3450,3900,4400,4950,
-		5550,6150,6800,7600,8450,9350,10300,11300,12350,13400
-	)
+	xpTable: [	// 30 levels, 10 on each line
+		0, 30, 50, 100, 180, 300, 450, 600, 800, 1050,
+		1300, 1600, 1900, 2250, 2600, 3000, 3450, 3900, 4400, 4950,
+		5550, 6150, 6800, 7600, 8450, 9350, 10300, 11300, 12350, 13400
+	]
 
-}
+};
 
 /**
  * Fix delay/lag shit!
  */
 function tick() {
-	var extraTicks = 0;
-	var logics = 0;
 
 	Game.timeDiff = performance.now() - Game.lastTime;
 
@@ -565,11 +563,11 @@ function handleMouseDown(e) {
 	}
 	e.preventDefault();
 }
-function handleMouseUp(e) {
+function handleMouseUp() {
 	Game.mouseDown = false;
 }
 function mousedownRepeat(e) {
-	canvas = $("#game-canvas");
+	var canvas = $("#game-canvas");
 	var x = e.pageX - canvas.offset().left;
 	var y = e.pageY - canvas.offset().top;
 	if (Game.multiplayer) {
